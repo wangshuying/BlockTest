@@ -5,6 +5,7 @@
 //  Created by wangshuying on 14/12/22.
 //  Copyright (c) 2014年 wangshuying. All rights reserved.
 //
+//  reference: http://blog.parse.com/2013/02/05/objective-c-blocks-quiz/
 
 #import "ViewController.h"
 
@@ -19,7 +20,10 @@
     // Do any additional setup after loading the view, typically from a nib.
     
     exampleA();
-    examleB();
+    exampleB();
+    exampleC();
+    exampleD();
+    exampleE();
 }
 
 - (void)didReceiveMemoryWarning {
@@ -31,14 +35,14 @@
 void exampleA() {
     char a = 'A';
     ^{
-        printf("%C\n", a);
+        printf("%c\n", a);
     }();
 }
 
 void exampleB_addBlockToArray(NSMutableArray *array) {
     char b = 'B';
     [array addObject:^{
-        printf("%C\n", b);
+        printf("%c\n", b);
     }];
     
     // without ARC, The code should be:
@@ -49,10 +53,51 @@ void exampleB_addBlockToArray(NSMutableArray *array) {
      */
 }
 
-void examleB() {
+void exampleB() {
     NSMutableArray *array = [NSMutableArray array];
     exampleB_addBlockToArray(array);
     void (^block)() = [array objectAtIndex:0];
+    block();
+}
+
+void exampleC_addBlockArray(NSMutableArray *array) {
+    [array addObject:^{
+        printf("C\n");
+    }];
+}
+
+void exampleC() {
+    NSMutableArray *array = [NSMutableArray array];
+    exampleC_addBlockArray(array);
+    void (^block)() = [array objectAtIndex:0];
+    block();
+}
+
+typedef void (^dBlock)();
+
+dBlock exampleD_getBlock() {
+    char d = 'D';
+    return ^{
+        printf("%c\n", d);
+    };
+}
+
+void exampleD() {
+    exampleD_getBlock()();
+}
+
+typedef void (^eBlock)();
+
+eBlock exampleE_getBlock() {
+    char e = 'E';
+    void (^block)() = ^{
+        printf("%c\n", e);
+    };
+    return block;
+}
+
+void exampleE() {
+    eBlock block = exampleE_getBlock();
     block();
 }
 
